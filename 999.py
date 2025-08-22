@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from playwright.sync_api import sync_playwright
 import requests
+import traceback
 
 app = FastAPI()
 
@@ -14,8 +15,12 @@ def fetch_site():
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(
-                headless=True,
-                args=["--no-sandbox", "--disable-dev-shm-usage"]
+              headless=True,
+              args=[
+                  "--no-sandbox",
+                  "--disable-dev-shm-usage",
+                  "--disable-setuid-sandbox"
+                ]
             )
             page = browser.new_page()
             page.goto("https://xinying.tainan.gov.tw/", timeout=90000)
@@ -26,7 +31,8 @@ def fetch_site():
     except Exception as e:
         # fallback
         r = requests.get("https://xinying.tainan.gov.tw/")
-        return {"text": r.text[:2000], "source": "requests", "error": str(e)}
+        return {"text": r.text[:2000], "source": "requests", "error": str(e),"traceback": traceback.format_exc()}
+
 
 
 
