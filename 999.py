@@ -1,23 +1,26 @@
-from fastapi import FastAPI
-from playwright.sync_api import sync_playwright
+import nest_asyncio
+import asyncio
+from playwright.async_api import async_playwright
 
-app = FastAPI()
+nest_asyncio.apply()  # 解決 asyncio.run() 在已存在事件循環報錯
 
-# Health check endpoints（Leapcell 檢查會用到）
-@app.get("/kaithhealthcheck")
-@app.get("/kaithheathcheck")
-def healthcheck():
-    return {"status": "ok"}
+async def scrape_site_text():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
 
-@app.get("/fetch")
-def fetch_yahoo():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto("https://tw.yahoo.com/", timeout=60000)
-        content = page.content()
-        browser.close()
-        return {"html": content}
+        url = "https://xinying.tainan.gov.tw/"
+        print("⏳ 正在開啟頁面...")
+        await page.goto(url, timeout=90000)
+
+        await page.wait_for_selector("body", timeout=60000)
+        body_handle = await page.query_selector("body")
+        return await body_handle.inner_text() if body_handle else "❌ 無法擷取 body 元素"
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    text_content = loop.run_until_complete(scrape_site_text())
+    print(text_content[:3000])  # 只顯示前 3000 字
 
 
 
