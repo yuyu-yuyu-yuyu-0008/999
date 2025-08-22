@@ -13,18 +13,21 @@ def healthcheck():
 def fetch_site():
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-dev-shm-usage"]
+            )
             page = browser.new_page()
             page.goto("https://xinying.tainan.gov.tw/", timeout=90000)
             page.wait_for_selector("body", timeout=60000)
-            body = page.query_selector("body")
-            text = body.inner_text() if body else "❌ 無法擷取 body 元素"
+            text = page.inner_text("body")
             browser.close()
-            return {"text": text, "source": "playwright"}
+            return {"text": text[:2000], "source": "playwright"}
     except Exception as e:
-        # 如果 playwright 爆掉，就用 requests 當備援
+        # fallback
         r = requests.get("https://xinying.tainan.gov.tw/")
         return {"text": r.text[:2000], "source": "requests", "error": str(e)}
+
 
 
 
