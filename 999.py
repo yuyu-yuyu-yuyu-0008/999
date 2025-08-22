@@ -14,10 +14,13 @@ def fetch_yahoo():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("https://tw.yahoo.com/", timeout=60000)
-        content = page.content()
+        page.goto("https://xinying.tainan.gov.tw/", timeout=90000)
+        page.wait_for_selector("body", timeout=60000)
+        body = page.query_selector("body")
+        text = body.inner_text() if body else "❌ 無法擷取 body 元素"
         browser.close()
-        return {"html": content}
+        return {"text": text}
+
 
 
 
