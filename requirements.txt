@@ -1,6 +1,7 @@
 playwright
 fastapi
 uvicorn
+requests
 
 
 
