@@ -1,8 +1,5 @@
-playwright
-fastapi
-uvicorn
-
-
+playwright==1.44.0
+nest_asyncio==1.5.6
 
 
 
