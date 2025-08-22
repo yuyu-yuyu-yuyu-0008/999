@@ -22,16 +22,37 @@ def fetch_site():
                   "--disable-setuid-sandbox"
                 ]
             )
-            page = browser.new_page()
-            page.goto("https://xinying.tainan.gov.tw/", timeout=90000)
-            page.wait_for_selector("body", timeout=60000)
-            text = page.inner_text("body")
+            # 建立新的瀏覽器 Context
+            context = browser.new_context()
+            
+            # 再從 Context 開新頁面
+            page = context.new_page()
+            
+            # 造訪網頁
+            page.goto("https://xinying.tainan.gov.tw/", timeout=500000)
+            
+            # 等待 body 元素
+            page.wait_for_selector("body", timeout=300000)
+            
+            # 取得 body 文字
+            body = page.query_selector("body")
+            text = body.inner_text() if body else "❌ 無法擷取 body 元素"
+            
+            # 關閉 Context 與瀏覽器
+            context.close()
             browser.close()
-            return {"text": text[:2000], "source": "playwright"}
+            
+            return {"text": text, "source": "playwright"}
+
     except Exception as e:
-        # fallback
+        # 如果 playwright 失敗，用 requests 做備援
         r = requests.get("https://xinying.tainan.gov.tw/")
-        return {"text": r.text[:2000], "source": "requests", "error": str(e),"traceback": traceback.format_exc()}
+        return {
+            "text": r.text[:2000],
+            "source": "requests",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
 
 
 
