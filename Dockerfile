@@ -1,14 +1,15 @@
-FROM python:3.9-slim
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
+# 安裝依賴
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# 複製程式碼
+COPY . /app
 
-RUN apt-get update && apt-get install -y docker.io
+# 啟動服務
+CMD ["uvicorn", "999:app", "--host", "0.0.0.0", "--port", "8080"]
 
-CMD ["python", "999.py"]
 
