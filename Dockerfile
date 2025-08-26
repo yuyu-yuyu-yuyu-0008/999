@@ -6,6 +6,11 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN apt-get update && apt-get install -y \
+    libnss3 libxss1 libasound2 fonts-liberation \
+    libatk-bridge2.0-0 libatk1.0-0 libcups2 \
+    libdrm2 libxkbcommon0 libgbm1
+    
 # 如果你沒有 requirements.txt，可以直接這樣裝
 # RUN pip install fastapi uvicorn[standard]
 
