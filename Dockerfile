@@ -6,10 +6,14 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 如果你沒有 requirements.txt，可以直接這樣裝
+# RUN pip install fastapi uvicorn[standard]
+
 # 複製程式碼
 COPY . /app
 
 # 啟動服務
 CMD ["uvicorn", "999:app", "--host", "0.0.0.0", "--port", "8080"]
+
 
 
