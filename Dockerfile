@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 COPY . /app
 
 # 啟動服務
-CMD ["python", "999.py"]
+CMD ["uvicorn", "999:app", "--host", "0.0.0.0", "--port", "8080"]
 
 
 
