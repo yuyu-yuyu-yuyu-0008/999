@@ -8,5 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN apt-get update && apt-get install -y docker.io
+
 CMD ["python", "999.py"]
 
