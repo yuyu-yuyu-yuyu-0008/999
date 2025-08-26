@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 COPY . /app
 
 # 啟動服務
-CMD ["Python", "999.py"]
+CMD ["python", "999.py"]
 
 
 
